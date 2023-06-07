@@ -14,11 +14,12 @@ public class Main {
     products.add(1, new Product("Хлеб", 14));
     products.add(2, new Product("Гречневая крупа", 80));
 
-    File basketFile = new File("basket.txt");
+    File basketFile = new File("basket.bin");
     Basket basket = new Basket();
     try {
-      basket = Basket.loadFromTxtFile(basketFile);
-    } catch (IOException | NumberFormatException ignored) {}
+      basket = Basket.loadFromBinFile(basketFile);
+    } catch (Exception ignored) {}
+    SYSOUT.println(basket.toString());
 
     Scanner scanner = new Scanner(System.in);
     StringBuilder productsList = new StringBuilder();
@@ -67,7 +68,7 @@ public class Main {
     SYSOUT.println("Ваша корзина: ");
     basket.printCart();
     try {
-      basket.saveTxt(basketFile);
+      basket.saveBin(basketFile);
     } catch (IOException ex) {
       SYSOUT.println(ex);
     }

@@ -1,7 +1,8 @@
 import java.io.*;
 import java.util.HashMap;
 
-public class Basket {
+public class Basket implements Serializable {
+  @Serial private static final long serialVersionUID = 1L;
 
   private HashMap<Product, Long> basket = new HashMap<>();
 
@@ -33,6 +34,20 @@ public class Basket {
     Main.SYSOUT.println("Итого: " + totalPrice[0] + " руб");
   }
 
+  public void saveBin(File file) throws IOException {
+    try (FileOutputStream outputStream = new FileOutputStream(file);
+         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+      objectOutputStream.writeObject(this);
+    }
+  }
+
+  public static Basket loadFromBinFile(File textFile) throws Exception {
+    try (FileInputStream inputStream = new FileInputStream(textFile);
+         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+      return (Basket) objectInputStream.readObject();
+    }
+  }
+
   public void saveTxt(File textFile) throws IOException {
     if(!textFile.exists()) {
       if(textFile.getParentFile() != null) textFile.getParentFile().mkdirs();
@@ -55,5 +70,10 @@ public class Basket {
       }
       return new Basket(productsInBasket);
     }
+  }
+
+  @Override
+  public String toString() {
+    return "Basket[" + basket.toString() + "]";
   }
 }
