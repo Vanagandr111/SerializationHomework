@@ -1,3 +1,5 @@
+package ru.netology;
+
 public class Product {
   private final String name;
   private final long price;

@@ -1,3 +1,5 @@
+package ru.netology;
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -10,6 +12,10 @@ public class Basket {
   }
 
   public Basket() {}
+
+  public HashMap<Product, Long> getBasket() {
+    return basket;
+  }
 
   public boolean addToCart(int productNum, long amount) {
     try {

@@ -1,7 +1,13 @@
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+package ru.netology;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,11 +20,14 @@ public class Main {
     products.add(1, new Product("Хлеб", 14));
     products.add(2, new Product("Гречневая крупа", 80));
 
-    File basketFile = new File("basket.txt");
+    File basketFileJson = new File("basket.json");
+    File logFile = new File("log.csv");
+    ClientLog log = new ClientLog();
+
     Basket basket = new Basket();
     try {
-      basket = Basket.loadFromTxtFile(basketFile);
-    } catch (IOException | NumberFormatException ignored) {}
+      basket = loadFromJson(basketFileJson);
+    } catch (IOException | ParseException ignored) {}
 
     Scanner scanner = new Scanner(System.in);
     StringBuilder productsList = new StringBuilder();
@@ -41,14 +50,16 @@ public class Main {
         continue;
       }
 
-      int id; int count;
+      int id; long count;
       try {
         id = Integer.parseInt(inputArray[0]);
-        count = Integer.parseInt(inputArray[1]);
+        count = Long.parseLong(inputArray[1]);
       } catch (NumberFormatException ex) {
         SYSOUT.println(inputArray.length + "Правильный формат: \"id_товара кол-во_товара\"");
         continue;
       }
+      log.log(id, count);
+
       if (count <= 0) {
         SYSOUT.println("Количество товара должно быть больше 0");
         continue;
@@ -67,9 +78,45 @@ public class Main {
     SYSOUT.println("Ваша корзина: ");
     basket.printCart();
     try {
-      basket.saveTxt(basketFile);
+      //basket.saveTxt(basketFileTxt);
+      saveAsJson(basketFileJson, basket);
+      log.exportAsCSV(logFile);
     } catch (IOException ex) {
       SYSOUT.println(ex);
+    }
+  }
+
+  public static Basket loadFromJson(File jsonFile) throws IOException, ParseException, ClassCastException, IndexOutOfBoundsException {
+    JSONParser parser = new JSONParser();
+    HashMap<Product, Long> productLongHashMap = new HashMap<>();
+    try {
+      Object obj = parser.parse(new FileReader(jsonFile));
+      JSONArray jsonArray = (JSONArray) obj;
+      jsonArray.forEach(o -> {
+        JSONObject object = (JSONObject) o;
+        int productName = Math.toIntExact((long) object.get("productName"));
+        long amount = (long) object.get("amount");
+        productLongHashMap.put(products.get(productName), amount);
+      });
+    } catch (IOException | ParseException ignored) {}
+
+    return new Basket(productLongHashMap);
+  }
+
+  public static void saveAsJson(File jsonFile, Basket basket) throws IOException {
+    JSONArray array = new JSONArray();
+    basket.getBasket().forEach((product, aLong) -> {
+      JSONObject object = new JSONObject();
+      object.put("productName", products.indexOf(product));
+      object.put("amount", aLong);
+      array.add(object);
+    });
+
+    try (FileWriter file = new FileWriter(jsonFile)) {
+      file.write(array.toJSONString());
+      file.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 }
