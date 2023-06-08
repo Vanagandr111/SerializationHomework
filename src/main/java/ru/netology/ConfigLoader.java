@@ -44,10 +44,11 @@ public class ConfigLoader {
             for (int x = 0; x < nodeList1.getLength(); x++) {
               if (nodeList1.item(x).getNodeType() != Node.ELEMENT_NODE) continue;
               String nodeName1 = nodeList1.item(x).getNodeName();
+              String value = nodeList1.item(x).getChildNodes().item(0).getTextContent();
               switch (nodeName1) {
-                case "enabled" -> loadEnabled = Boolean.parseBoolean(nodeList1.item(x).getChildNodes().item(0).getTextContent());
-                case "fileName" -> loadFileName = nodeList1.item(x).getChildNodes().item(0).getTextContent();
-                case "format" -> loadType = BasketType.getTypeFromString(nodeList1.item(x).getChildNodes().item(0).getTextContent());
+                case "enabled" -> loadEnabled = Boolean.parseBoolean(value);
+                case "fileName" -> loadFileName = value;
+                case "format" -> loadType = BasketType.getTypeFromString(value);
               }
             }
           }
@@ -56,10 +57,11 @@ public class ConfigLoader {
             for (int x = 0; x < nodeList1.getLength(); x++) {
               if (nodeList1.item(x).getNodeType() != Node.ELEMENT_NODE) continue;
               String nodeName1 = nodeList1.item(x).getNodeName();
+              String value = nodeList1.item(x).getChildNodes().item(0).getTextContent();
               switch (nodeName1) {
-                case "enabled" -> saveEnabled = Boolean.parseBoolean(nodeList1.item(x).getChildNodes().item(0).getTextContent());
-                case "fileName" -> saveFileName = nodeList1.item(x).getChildNodes().item(0).getTextContent();
-                case "format" -> saveType = BasketType.getTypeFromString(nodeList1.item(x).getChildNodes().item(0).getTextContent());
+                case "enabled" -> saveEnabled = Boolean.parseBoolean(value);
+                case "fileName" -> saveFileName = value;
+                case "format" -> saveType = BasketType.getTypeFromString(value);
               }
             }
           }
@@ -68,9 +70,10 @@ public class ConfigLoader {
             for (int x = 0; x < nodeList1.getLength(); x++) {
               if (nodeList1.item(x).getNodeType() != Node.ELEMENT_NODE) continue;
               String nodeName1 = nodeList1.item(x).getNodeName();
+              String value = nodeList1.item(x).getChildNodes().item(0).getTextContent();
               switch (nodeName1) {
-                case "enabled" -> logEnabled = Boolean.parseBoolean(nodeList1.item(x).getChildNodes().item(0).getTextContent());
-                case "fileName" -> logFileName = nodeList1.item(x).getChildNodes().item(0).getTextContent();
+                case "enabled" -> logEnabled = Boolean.parseBoolean(value);
+                case "fileName" -> logFileName = value;
               }
             }
           }
