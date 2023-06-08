@@ -19,14 +19,19 @@ public class Main {
     products.add(0, new Product("Молоко", 50));
     products.add(1, new Product("Хлеб", 14));
     products.add(2, new Product("Гречневая крупа", 80));
+    ConfigLoader config = new ConfigLoader("shop.xml");
 
-    File basketFileJson = new File("basket.json");
-    File logFile = new File("log.csv");
+    File basketFileLoad = new File(config.loadFileName);
+    File basketFileSave = new File(config.saveFileName);
+    File logFile = new File(config.logFileName);
+
     ClientLog log = new ClientLog();
-
     Basket basket = new Basket();
     try {
-      basket = loadFromJson(basketFileJson);
+      if(config.loadEnabled) {
+        if(config.loadType.equals(BasketType.JSON)) basket = loadFromJson(basketFileLoad);
+        else if(config.loadType.equals(BasketType.TEXT)) basket = Basket.loadFromTxtFile(basketFileLoad);
+      }
     } catch (IOException | ParseException ignored) {}
 
     Scanner scanner = new Scanner(System.in);
@@ -78,9 +83,11 @@ public class Main {
     SYSOUT.println("Ваша корзина: ");
     basket.printCart();
     try {
-      //basket.saveTxt(basketFileTxt);
-      saveAsJson(basketFileJson, basket);
-      log.exportAsCSV(logFile);
+      if(config.saveEnabled) {
+        if(config.saveType.equals(BasketType.JSON)) saveAsJson(basketFileSave, basket);
+        else if(config.saveType.equals(BasketType.TEXT)) basket.saveTxt(basketFileSave);
+      }
+      if(config.logEnabled) log.exportAsCSV(logFile);
     } catch (IOException ex) {
       SYSOUT.println(ex);
     }
